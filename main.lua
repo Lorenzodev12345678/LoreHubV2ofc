@@ -1,121 +1,44 @@
--- [[ LoreHub v2 - Oficial Release 2025 ]]
+-- [[ LoreHub v2 - Delta Edition ]]
 -- [[ Desenvolvido por Lorenzodev12345678 ]]
 
--- Garantindo que o rblx carregou antes de abrir a UI
-if not game:IsLoaded() then 
-    game.Loaded:Wait() 
-end
-task.wait(0.5)
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("LoreHub v2 | Universal", "Midnight") -- Tema Midnight combina com o Delta
 
-local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
-local Window = OrionLib:MakeWindow({
-    Name = "LoreHub v2 | Universal", 
-    HidePremium = false, 
-    SaveConfig = true, 
-    ConfigFolder = "LoreHubV2", 
-    IntroText = "LoreHub v2 - Bem-vindo, RLK!"
-})
+-- ABA PRINCIPAL
+local Main = Window:NewTab("Combate")
+local MainSection = Main:NewSection("Habilidades RLK")
 
--- [[ ABA DE COMBATE ]]
-local CombatTab = Window:MakeTab({
-	Name = "Combate",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+MainSection:NewButton("Fatality Combo (R15)", "Executa combo de ataque rápido", function()
+    local lp = game.Players.LocalPlayer
+    local char = lp.Character
+    if char and char:FindFirstChild("Humanoid") then
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://507770239" 
+        local load = char.Humanoid:LoadAnimation(anim)
+        load:Play()
+    end
+end)
 
-CombatTab:AddSection({
-	Name = "Habilidades de Luta"
-})
+-- ABA OTIMIZAÇÃO
+local Opti = Window:NewTab("Otimização")
+local OptiSection = Opti:NewSection("Performance Booster")
 
-CombatTab:AddButton({
-	Name = "Fatality Combo (R15)",
-	Callback = function()
-        local lp = game.Players.LocalPlayer
-        local char = lp.Character
-        if char and char:FindFirstChild("Humanoid") then
-            -- Animação de ataque rápido
-            local anim = Instance.new("Animation")
-            anim.AnimationId = "rbxassetid://507770239" 
-            local load = char.Humanoid:LoadAnimation(anim)
-            load:Play()
-            
-            -- Notificação de Sucesso
-            OrionLib:MakeNotification({
-                Name = "Fatality Ativado",
-                Content = "Combo de combate executado com sucesso!",
-                Image = "rbxassetid://4483345998",
-                Time = 3
-            })
-        else
-            OrionLib:MakeNotification({
-                Name = "Erro",
-                Content = "Seu personagem precisa ser R15!",
-                Time = 3
-            })
+OptiSection:NewButton("Boost FPS (200+)", "Remove lag e texturas", function()
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    game.Lighting.GlobalShadows = false
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("MeshPart") then
+            v.Material = Enum.Material.SmoothPlastic
         end
-  	end    
-})
-
--- [[ ABA DE OTIMIZAÇÃO ]]
-local SettingsTab = Window:MakeTab({
-	Name = "Otimização",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-SettingsTab:AddSection({
-	Name = "Performance Booster"
-})
-
-SettingsTab:AddButton({
-	Name = "Boost FPS (200+ Extreme)",
-	Callback = function()
-        -- Reduz qualidade gráfica interna
-        settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
-        
-        -- Remove sombras e efeitos visuais pesados
-        game.Lighting.GlobalShadows = false
-        game.Lighting.FogEnd = 9e9
-        
-        -- Transforma materiais em plástico liso (tira o lag de textura)
-        for _, v in pairs(game:GetDescendants()) do
-            if v:IsA("Part") or v:IsA("MeshPart") or v:IsA("BasePart") then
-                v.Material = Enum.Material.SmoothPlastic
-                v.Reflectance = 0
-            end
-            -- Remove Decals (adesivos/pixações que pesam)
-            if v:IsA("Decal") or v:IsA("Texture") then
-                v:Destroy()
-            end
+        if v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
         end
-        
-        OrionLib:MakeNotification({
-            Name = "FPS Booster",
-            Content = "Otimização aplicada! Seu rbx agora está leve.",
-            Image = "rbxassetid://4483345998",
-            Time = 4
-        })
-  	end    
-})
+    end
+end)
 
--- [[ ABA DE CRÉDITOS ]]
-local InfoTab = Window:MakeTab({
-	Name = "Info",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-InfoTab:AddLabel("Criador: Lorenzodev12345678")
-InfoTab:AddLabel("Lançamento: 23/12/2025")
-InfoTab:AddLabel("Status: 100% Funcional")
-
-InfoTab:AddButton({
-	Name = "Copiar Link do ScriptBlox",
-	Callback = function()
-		setclipboard("https://scriptblox.com/script/Universal-Script-LoreahubV2-77644")
-        OrionLib:MakeNotification({Name = "Copiado!", Content = "Link copiado para a área de transferência.", Time = 2})
-	end
-})
-
--- Finaliza o script e mostra a janela
-OrionLib:Init()
+-- ABA INFO
+local Info = Window:NewTab("Info")
+local InfoSection = Info:NewSection("Criador: Lorenzodev12345678")
+InfoSection:NewKeybind("Esconder Menu", "Fecha a UI", Enum.KeyCode.F, function()
+	Library:ToggleLib()
+end)
