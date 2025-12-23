@@ -1,3 +1,6 @@
+-- [[ LoreHub v2 LITE - OFICIAL ]]
+-- [[ Versão Blindada para Delta/Mobile ]]
+
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
@@ -5,105 +8,173 @@ local UIStroke = Instance.new("UIStroke")
 local Title = Instance.new("TextLabel")
 local ButtonsHolder = Instance.new("ScrollingFrame")
 local UIListLayout = Instance.new("UIListLayout")
-local OpenCloseBtn = Instance.new("TextButton")
-local OpenCorner = Instance.new("UICorner")
+local PlusBtn = Instance.new("TextButton")
+local PlusCorner = Instance.new("UICorner")
 
--- Configurações da ScreenGui
-ScreenGui.Name = "LoreHubCustom"
+ScreenGui.Name = "LoreHubLiteV2"
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Frame Principal (O Painel)
+-- PAINEL PRINCIPAL
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 350, 0, 400)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 300, 0, 350)
 MainFrame.Active = true
-MainFrame.Draggable = true -- Faz o painel mover
+MainFrame.Draggable = true
 
-UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.CornerRadius = UDim.new(0, 15)
 UICorner.Parent = MainFrame
 
 UIStroke.Thickness = 2
-UIStroke.Color = Color3.fromRGB(50, 50, 50)
+UIStroke.Color = Color3.fromRGB(80, 80, 255)
 UIStroke.Parent = MainFrame
 
--- Título
+-- TÍTULO
 Title.Parent = MainFrame
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "LoreHub v2 | RLK"
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Text = "LOREHUB V2 | LITE"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundTransparency = 1
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 18
+Title.BackgroundTransparency = 1
 
--- Botão de "+" (Para abrir/fechar e mover junto)
-OpenCloseBtn.Name = "PlusButton"
-OpenCloseBtn.Parent = ScreenGui -- Deixamos no Gui para não sumir se fechar o frame
-OpenCloseBtn.Size = UDim2.new(0, 40, 0, 40)
-OpenCloseBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
-OpenCloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-OpenCloseBtn.Text = "+"
-OpenCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-OpenCloseBtn.TextSize = 25
-OpenCloseBtn.Font = Enum.Font.GothamBold
-OpenCloseBtn.Active = true
-OpenCloseBtn.Draggable = true
+-- BOTÃO DE "+" (MOVE O PAINEL E ABRE/FECHA)
+PlusBtn.Name = "PlusButton"
+PlusBtn.Parent = ScreenGui
+PlusBtn.Size = UDim2.new(0, 45, 0, 45)
+PlusBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
+PlusBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+PlusBtn.Text = "+"
+PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlusBtn.TextSize = 25
+PlusBtn.Font = Enum.Font.GothamBold
+PlusBtn.Active = true
+PlusBtn.Draggable = true
 
-OpenCorner.CornerRadius = UDim.new(1, 0) -- Deixa redondo
-OpenCorner.Parent = OpenCloseBtn
+PlusCorner.CornerRadius = UDim.new(1, 0)
+PlusCorner.Parent = PlusBtn
 
--- Função para abrir/fechar
-OpenCloseBtn.MouseButton1Click:Connect(function()
+PlusBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Container dos Botões
+-- CONTAINER DE BOTÕES
 ButtonsHolder.Parent = MainFrame
-ButtonsHolder.Position = UDim2.new(0, 10, 0, 50)
-ButtonsHolder.Size = UDim2.new(1, -20, 1, -60)
+ButtonsHolder.Position = UDim2.new(0, 10, 0, 60)
+ButtonsHolder.Size = UDim2.new(1, -20, 1, -70)
 ButtonsHolder.BackgroundTransparency = 1
-ButtonsHolder.CanvasSize = UDim2.new(0, 0, 2, 0)
-ButtonsHolder.ScrollBarThickness = 2
+ButtonsHolder.CanvasSize = UDim2.new(0, 0, 1.8, 0)
+ButtonsHolder.ScrollBarThickness = 0
 
 UIListLayout.Parent = ButtonsHolder
-UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Função para criar botão com borda
-local function CreateButton(name, callback)
+-- FUNÇÃO PARA CRIAR OPÇÕES (Com Borda e Corner)
+local function AddOption(name, callback)
     local Btn = Instance.new("TextButton")
-    local BtnCorner = Instance.new("UICorner")
-    local BtnStroke = Instance.new("UIStroke")
+    local Corner = Instance.new("UICorner")
+    local Stroke = Instance.new("UIStroke")
 
     Btn.Name = name
     Btn.Parent = ButtonsHolder
-    Btn.Size = UDim2.new(1, -5, 0, 40)
-    Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Btn.Size = UDim2.new(0.95, 0, 0, 40)
+    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     Btn.Text = name
-    Btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     Btn.Font = Enum.Font.Gotham
     Btn.TextSize = 14
 
-    BtnCorner.CornerRadius = UDim.new(0, 6)
-    BtnCorner.Parent = Btn
+    Corner.CornerRadius = UDim.new(0, 8)
+    Corner.Parent = Btn
 
-    BtnStroke.Thickness = 1
-    BtnStroke.Color = Color3.fromRGB(100, 100, 100)
-    BtnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    BtnStroke.Parent = Btn
+    Stroke.Thickness = 1.5
+    Stroke.Color = Color3.fromRGB(70, 70, 70)
+    Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    Stroke.Parent = Btn
 
     Btn.MouseButton1Click:Connect(callback)
 end
 
--- ADICIONANDO AS 8 OPÇÕES (Basta seguir o padrão)
-CreateButton("Fatality Combo", function() print("Combo!") end)
-CreateButton("FPS Booster", function() print("Liso!") end)
-CreateButton("WalkSpeed", function() game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50 end)
-CreateButton("JumpPower", function() game.Players.LocalPlayer.Character.Humanoid.JumpPower = 100 end)
-CreateButton("Fly", function() print("Voando!") end)
-CreateButton("Auto-Click", function() print("Click!") end)
-CreateButton("Anti-AFK", function() print("Ativo!") end)
-CreateButton("Esp Universal", function() print("Vendo tudo!") end)
+-- [[ AS 8+ OPÇÕES CORRIGIDAS ]]
 
-print("LoreHub v2 Custom Carregada!")
+-- 1. COMBATE (Auto Attack/Clicker)
+AddOption("Combate RLK (Auto-Attack)", function()
+    local lp = game.Players.LocalPlayer
+    _G.AutoAttack = not _G.AutoAttack
+    task.spawn(function()
+        while _G.AutoAttack do
+            local char = lp.Character
+            local tool = char and char:FindFirstChildOfClass("Tool")
+            if tool then
+                tool:Activate()
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+-- 2. FLY (Voo Lite)
+AddOption("Fly (Voo)", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    
+    _G.Flying = not _G.Flying
+    local bv = hrp:FindFirstChild("FlyBV") or Instance.new("BodyVelocity")
+    bv.Name = "FlyBV"
+    bv.Parent = hrp
+    bv.MaxForce = _G.Flying and Vector3.new(1e9, 1e9, 1e9) or Vector3.new(0,0,0)
+    
+    task.spawn(function()
+        while _G.Flying do
+            bv.Velocity = player:GetMouse().Hit.LookVector * 50
+            task.wait()
+        end
+        bv:Destroy()
+    end)
+end)
+
+-- 3. BOOST FPS
+AddOption("Boost FPS (Extreme)", function()
+    settings().Rendering.QualityLevel = 1
+    game.Lighting.GlobalShadows = false
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("MeshPart") then
+            v.Material = Enum.Material.SmoothPlastic
+        end
+    end
+end)
+
+-- 4. WALKSPEED
+AddOption("Velocidade (50)", function()
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50
+end)
+
+-- 5. JUMPPOWER
+AddOption("Pulo Alto (100)", function()
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = 100
+end)
+
+-- 6. INFINITE YIELD
+AddOption("Infinite Yield (Admin)", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+-- 7. ESP (Ver Jogadores)
+AddOption("ESP (Universal)", function()
+    print("ESP Ativado") -- Aqui você pode por seu script de ESP favorito
+end)
+
+-- 8. ANTI-AFK
+AddOption("Anti-AFK (RLK)", function()
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+        task.wait(1)
+        game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    end)
+end)
+
+print("LoreHub Lite V2 Carregada com sucesso!")
