@@ -1,10 +1,10 @@
 -- [[ LoreHub v2 - FULL VERSION ]]
--- [[ Botão com Imagem Circular & Stroke Preto ]]
+-- [[ Botão com Imagem Circular & Skybox Agressivo ]]
 
 local player = game.Players.LocalPlayer
 local pgui = player:WaitForChild("PlayerGui")
 
--- Destruir versão antiga para não bugar ao re-executar
+-- Destruir versão antiga para não bugar
 if pgui:FindFirstChild("LoreHubLiteV2") then pgui:FindFirstChild("LoreHubLiteV2"):Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -15,20 +15,18 @@ ScreenGui.ResetOnSpawn = false
 -- [ BOTÃO CIRCULAR COM A SUA IMAGEM ]
 local PlusBtn = Instance.new("ImageButton", ScreenGui)
 PlusBtn.Name = "MainButton"
-PlusBtn.Size = UDim2.new(0, 45, 0, 45) -- Tamanho pequeno e redondo
+PlusBtn.Size = UDim2.new(0, 45, 0, 45)
 PlusBtn.Position = UDim2.new(0.1, 0, 0.2, 0)
 PlusBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-PlusBtn.Image = "rbxassetid://110311797595334" -- Sua imagem aplicada aqui
+PlusBtn.Image = "rbxassetid://110311797595334" -- Sua imagem aplicada
 PlusBtn.Draggable = true
 PlusBtn.Active = true
 
--- Deixa o botão redondo
 local Corner = Instance.new("UICorner", PlusBtn)
 Corner.CornerRadius = UDim.new(1, 0)
 
--- Stroke PRETO no botão
 local Stroke = Instance.new("UIStroke", PlusBtn)
-Stroke.Color = Color3.fromRGB(0, 0, 0)
+Stroke.Color = Color3.fromRGB(0, 0, 0) -- Stroke PRETO
 Stroke.Thickness = 2
 
 -- [ FRAME PRINCIPAL ]
@@ -47,7 +45,7 @@ local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Color = Color3.fromRGB(0, 0, 0) -- Stroke preto no painel
 MainStroke.Thickness = 2
 
--- Título do Painel
+-- Título
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 50)
 Title.Text = "LOREHUB V2 | FULL"
@@ -56,12 +54,12 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 18
 Title.BackgroundTransparency = 1
 
--- Lógica de abrir/fechar clicando na imagem
+-- Abrir/Fechar
 PlusBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Container de Botões (Scrolling)
+-- Container de Botões
 local ButtonsHolder = Instance.new("ScrollingFrame", MainFrame)
 ButtonsHolder.Size = UDim2.new(1, -20, 1, -150)
 ButtonsHolder.Position = UDim2.new(0, 10, 0, 55)
@@ -70,7 +68,6 @@ ButtonsHolder.ScrollBarThickness = 0
 local UIList = Instance.new("UIListLayout", ButtonsHolder)
 UIList.Padding = UDim.new(0, 8)
 
--- Função para criar botões rapidamente
 local function AddOption(name, callback)
     local btn = Instance.new("TextButton", ButtonsHolder)
     btn.Size = UDim2.new(1, 0, 0, 35)
@@ -82,7 +79,7 @@ local function AddOption(name, callback)
     btn.MouseButton1Click:Connect(callback)
 end
 
--- [[ SISTEMA DE SKYBOX CUSTOM ]]
+-- [[ SISTEMA DE SKYBOX "LIMPA TUDO" ]]
 local SkyInput = Instance.new("TextBox", MainFrame)
 SkyInput.Size = UDim2.new(0.8, 0, 0, 30)
 SkyInput.Position = UDim2.new(0.1, 0, 0.72, 0)
@@ -105,23 +102,38 @@ SkyBtn.MouseButton1Click:Connect(function()
     if id then
         local asset = "rbxassetid://" .. id
         local lighting = game:GetService("Lighting")
-        local sky = lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky", lighting)
-        sky.SkyboxBk = asset sky.SkyboxDn = asset sky.SkyboxFt = asset
-        sky.SkyboxLf = asset sky.SkyboxRt = asset sky.SkyboxUp = asset
-        print("Skybox alterada para: " .. id)
+        
+        -- Remove tudo o que pode atrapalhar o céu
+        for _, v in pairs(lighting:GetChildren()) do
+            if v:IsA("Sky") or v:IsA("Atmosphere") or v:IsA("Clouds") then
+                v:Destroy()
+            end
+        end
+        
+        -- Cria nova Skybox
+        local newSky = Instance.new("Sky")
+        newSky.Name = "LoreSkybox"
+        newSky.SkyboxBk = asset
+        newSky.SkyboxDn = asset
+        newSky.SkyboxFt = asset
+        newSky.SkyboxLf = asset
+        newSky.SkyboxRt = asset
+        newSky.SkyboxUp = asset
+        newSky.SunAngularSize = 0 -- Tira o sol pra foto aparecer melhor
+        newSky.MoonAngularSize = 0
+        newSky.Parent = lighting
+        print("Skybox aplicada e antiga removida!")
     end
 end)
 
--- [[ FUNÇÕES DO HUB ]]
+-- [[ FUNÇÕES ]]
 
 AddOption("NoClip (Atravessar)", function()
     _G.Noclip = true
     game:GetService("RunService").Stepped:Connect(function()
-        if _G.Noclip then
-            if player.Character then
-                for _, v in pairs(player.Character:GetDescendants()) do
-                    if v:IsA("BasePart") then v.CanCollide = false end
-                end
+        if _G.Noclip and player.Character then
+            for _, v in pairs(player.Character:GetDescendants()) do
+                if v:IsA("BasePart") then v.CanCollide = false end
             end
         end
     end)
@@ -160,12 +172,10 @@ AddOption("Pegar HK416 (Fix)", function()
     local success, objects = pcall(function() return game:GetObjects("rbxassetid://2800627574") end)
     if success and objects[1] then
         local tool = objects[1]
-        if not tool:FindFirstChild("Handle") then
-            for _, v in pairs(tool:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.Name = "Handle"
-                    break
-                end
+        for _, v in pairs(tool:GetDescendants()) do
+            if v:IsA("BasePart") and not tool:FindFirstChild("Handle") then
+                v.Name = "Handle"
+                break
             end
         end
         tool.Parent = player.Backpack
@@ -178,4 +188,4 @@ AddOption("Speed (100)", function()
     end
 end)
 
-print("LoreHub V2 - Finalizada com Sua Imagem!")
+print("LoreHub V2 - Sistema de Skybox Fixado!")
