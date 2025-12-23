@@ -1,83 +1,41 @@
--- [[ LoreHub v2 LITE - FIX DE VISIBILIDADE ]]
+-- [[ LoreHub v2 - Skybox & UI Custom ]]
+-- [[ Desenvolvido por Lorenzodev12345678 ]]
 
 local player = game.Players.LocalPlayer
-local pgui = player:WaitForChild("PlayerGui") -- Mudança para PlayerGui para garantir que aparece
+local pgui = player:WaitForChild("PlayerGui")
 
--- Verifica se já existe para não duplicar
-if pgui:FindFirstChild("LoreHubLiteV2") then
-    pgui:FindFirstChild("LoreHubLiteV2"):Destroy()
-end
+-- Destruir versão antiga
+if pgui:FindFirstChild("LoreHubLiteV2") then pgui:FindFirstChild("LoreHubLiteV2"):Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "LoreHubLiteV2"
-ScreenGui.Parent = pgui -- Definindo o parent aqui
-ScreenGui.ResetOnSpawn = false -- Para o menu não sumir quando você morrer
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = pgui
+ScreenGui.ResetOnSpawn = false
 
-local MainFrame = Instance.new("Frame")
-local PlusBtn = Instance.new("TextButton")
-
--- [ BOTÃO DE + ] - Criamos ele primeiro para garantir que você veja algo
-PlusBtn.Name = "PlusButton"
-PlusBtn.Parent = ScreenGui
+-- [ BOTÃO DE + ]
+local PlusBtn = Instance.new("TextButton", ScreenGui)
 PlusBtn.Size = UDim2.new(0, 50, 0, 50)
-PlusBtn.Position = UDim2.new(0.1, 0, 0.2, 0) -- Posição um pouco mais para baixo
-PlusBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+PlusBtn.Position = UDim2.new(0.1, 0, 0.2, 0)
+PlusBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 PlusBtn.Text = "+"
 PlusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 PlusBtn.TextSize = 30
 PlusBtn.Font = Enum.Font.GothamBold
-PlusBtn.Active = true
 PlusBtn.Draggable = true
-PlusBtn.ZIndex = 10 -- Garante que fica em cima de tudo
-
-local PlusCorner = Instance.new("UICorner", PlusBtn)
-PlusCorner.CornerRadius = UDim.new(1, 0)
-
-local PlusStroke = Instance.new("UIStroke", PlusBtn)
-PlusStroke.Thickness = 2
-PlusStroke.Color = Color3.fromRGB(80, 80, 255)
+Instance.new("UICorner", PlusBtn).CornerRadius = UDim.new(1, 0)
+Instance.new("UIStroke", PlusBtn).Color = Color3.fromRGB(80, 80, 255)
 
 -- [ FRAME PRINCIPAL ]
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 300, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -210)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -150)
-MainFrame.Size = UDim2.new(0, 300, 0, 350)
-MainFrame.Visible = false -- Começa invisível
-MainFrame.Active = true
+MainFrame.Visible = false
 MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 15)
+Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(80, 80, 255)
 
-local MainCorner = Instance.new("UICorner", MainFrame)
-MainCorner.CornerRadius = UDim.new(0, 15)
-
-local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Thickness = 2
-MainStroke.Color = Color3.fromRGB(80, 80, 255)
-
--- Lógica de Abrir e Mensagem
-local jaAvisou = false
-PlusBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-    
-    if not jaAvisou and MainFrame.Visible then
-        jaAvisou = true
-        local msg = player.Name .. " está usando o LoreHub preparemmmmm"
-        task.spawn(function()
-            if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
-                local channel = game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral")
-                if channel then channel:SendAsync(msg) end
-            else
-                local chatEvent = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
-                if chatEvent and chatEvent:FindFirstChild("SayMessageRequest") then
-                    chatEvent.SayMessageRequest:FireServer(msg, "All")
-                end
-            end
-        end)
-    end
-end)
-
--- TÍTULO E BOTÕES (O restante do código continua igual abaixo...)
+-- Título
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 50)
 Title.Text = "LOREHUB V2 | LITE"
@@ -86,35 +44,115 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 18
 Title.BackgroundTransparency = 1
 
+-- Lógica de abrir e Mensagem no Chat
+local jaAvisou = false
+PlusBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+    if not jaAvisou and MainFrame.Visible then
+        jaAvisou = true
+        local msg = player.Name .. " está usando o LoreHub preparemmmmm"
+        task.spawn(function()
+            if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
+                local channel = game:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral")
+                if channel then channel:SendAsync(msg) end
+            else
+                game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+            end
+        end)
+    end
+end)
+
+-- Container de Botões
 local ButtonsHolder = Instance.new("ScrollingFrame", MainFrame)
-ButtonsHolder.Position = UDim2.new(0, 10, 0, 60)
-ButtonsHolder.Size = UDim2.new(1, -20, 1, -70)
+ButtonsHolder.Size = UDim2.new(1, -20, 1, -60)
+ButtonsHolder.Position = UDim2.new(0, 10, 0, 55)
 ButtonsHolder.BackgroundTransparency = 1
-ButtonsHolder.CanvasSize = UDim2.new(0, 0, 2, 0)
 ButtonsHolder.ScrollBarThickness = 0
+local UIList = Instance.new("UIListLayout", ButtonsHolder)
+UIList.Padding = UDim.new(0, 10)
 
-local UIListLayout = Instance.new("UIListLayout", ButtonsHolder)
-UIListLayout.Padding = UDim.new(0, 10)
-UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+-- [[ SISTEMA DE SKYBOX COM TEXTBOX ]]
+local SkySection = Instance.new("Frame", ButtonsHolder)
+SkySection.Size = UDim2.new(1, 0, 0, 80)
+SkySection.BackgroundTransparency = 1
 
-local function AddOption(name, callback)
-    local Btn = Instance.new("TextButton", ButtonsHolder)
-    Btn.Size = UDim2.new(0.95, 0, 0, 40)
-    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Btn.Text = name
-    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Btn.Font = Enum.Font.Gotham
-    Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 8)
-    local st = Instance.new("UIStroke", Btn)
-    st.Color = Color3.fromRGB(70, 70, 70)
-    st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    Btn.MouseButton1Click:Connect(callback)
+local SkyInput = Instance.new("TextBox", SkySection)
+SkyInput.Size = UDim2.new(1, 0, 0, 35)
+SkyInput.PlaceholderText = "Digite o ID da Imagem..."
+SkyInput.Text = ""
+SkyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+SkyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", SkyInput)
+
+local SkyBtn = Instance.new("TextButton", SkySection)
+SkyBtn.Size = UDim2.new(1, 0, 0, 35)
+SkyBtn.Position = UDim2.new(0, 0, 0, 40)
+SkyBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 255)
+SkyBtn.Text = "APLICAR SKYBOX"
+SkyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SkyBtn.Font = Enum.Font.GothamBold
+Instance.new("UICorner", SkyBtn)
+
+local function MudarCeu(id)
+    local cleanID = string.match(id, "%d+") -- Pega só os números caso o man cole link
+    if cleanID then
+        local asset = "rbxassetid://" .. cleanID
+        local lighting = game:GetService("Lighting")
+        local sky = lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky", lighting)
+        
+        sky.SkyboxBk = asset
+        sky.SkyboxDn = asset
+        sky.SkyboxFt = asset
+        sky.SkyboxLf = asset
+        sky.SkyboxRt = asset
+        sky.SkyboxUp = asset
+        print("Skybox alterada para: " .. cleanID)
+    end
 end
 
--- Adiciona as opções rapidamente
-AddOption("Combate RLK", function() print("Ativo") end)
-AddOption("Fly", function() print("Fly") end)
-AddOption("Velocidade (50)", function() player.Character.Humanoid.WalkSpeed = 50 end)
-AddOption("Infinite Yield", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() end)
+SkyBtn.MouseButton1Click:Connect(function()
+    MudarCeu(SkyInput.Text)
+end)
 
-print("LoreHub Lite: Interface Forçada!")
+SkyInput.FocusLost:Connect(function(enter)
+    if enter then MudarCeu(SkyInput.Text) end
+end)
+
+-- [[ OUTRAS OPÇÕES ]]
+local function AddOption(name, callback)
+    local btn = Instance.new("TextButton", ButtonsHolder)
+    btn.Size = UDim2.new(1, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
+AddOption("Pegar HK416 (Toolbox)", function()
+    local tool = game:GetObjects("rbxassetid://2800627574")[1]
+    if tool then tool.Parent = player.Backpack end
+end)
+
+AddOption("Fly (Câmera)", function()
+    _G.FlyRLK = not _G.FlyRLK
+    local hrp = player.Character.HumanoidRootPart
+    if _G.FlyRLK then
+        local bv = Instance.new("BodyVelocity", hrp)
+        bv.Name = "FlyVelocity"
+        bv.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+        task.spawn(function()
+            while _G.FlyRLK do
+                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * 100
+                task.wait()
+            end
+            bv:Destroy()
+        end)
+    end
+end)
+
+AddOption("Speed (100)", function() player.Character.Humanoid.WalkSpeed = 100 end)
+AddOption("Pulo (200)", function() player.Character.Humanoid.JumpPower = 200 end)
+
+print("LoreHub Skybox Custom Carregado!")
+
